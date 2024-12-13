@@ -1,0 +1,172 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Poppins", serif;
+    font-weight: 400;
+    font-style: normal;
+    background-color: #3a3a3a;
+}
+
+.container {
+    height: 100vh;
+    width: 30%;
+    margin: 0 auto;
+    box-shadow: 1px 1px 20px 20px rgba(1, 1, 1, 0.1);
+}
+
+.header {
+    height: 20%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    color: white;
+}
+
+.header h1,
+h2,
+h3 {
+    font-weight: 400;
+}
+
+.balance {
+    text-align: center;
+}
+
+.transaction_container {
+    padding: 10px 20px;
+    max-height: 55%;
+    overflow: scroll;
+}
+
+.transaction_container div {
+    color: white;
+}
+
+.transaction_container hr {
+    border: none;
+    height: 0.5px;
+    background-color: #ccc;
+
+}
+
+.transactions {
+    margin-top: 10px;
+    height: 100%;
+}
+
+.add_transaction_container {
+    height: 25%;
+    background-color: white;
+    padding: 10px 20px;
+}
+
+
+.inputs {
+    display: flex;
+    margin-top: 10px;
+    gap: 10px;
+}
+
+.form_control {
+    line-height: 1.6rem;
+    width: 100%;
+}
+
+.form_control input {
+    padding: 10px 10px;
+    font-size: 12px;
+    width: 100%;
+}
+
+.buttons_container {
+    display: flex;
+    margin-top: 20px;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.buttons_container button {
+    width: 100%;
+    border: none;
+    height: 50px;
+    color: white;
+}
+
+#earningsBtn {
+    background-color: #188d1c;
+    transition: 0.2s ease-in-out;
+}
+
+#earningsBtn:hover {
+    background-color: #167219;
+    transition: 0.2s ease-in-out;
+}
+
+#expenseBtn {
+    background-color: #ff1818;
+    transition: 0.2s ease-in-out;
+}
+
+#expenseBtn:hover {
+    background-color: #d31313;
+    transition: 0.2s ease-in-out;
+
+}
+
+.upper {
+    background-color: #302d2d;
+}
+
+.card {
+    width: 100%;
+    height: 40px;
+    display: flex;
+    box-shadow: 0px 5px 5px 2px rgba(1, 1, 1, 0.2);
+}
+
+.card_container {
+    display: none;
+    margin-top: 20px;
+}
+
+.show {
+    display: block;
+}
+
+.details {
+    width: 90%;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 10px;
+    font-size: 14px;
+    font-weight: 300;
+}
+
+.details p {
+    color: black;
+}
+
+.status {
+    width: 10%;
+    background-color: #167219;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.credit {
+    background-color: #167219;
+}
+
+.debit {
+    background-color: #ff1818;
+}

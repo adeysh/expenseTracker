@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="index.js" defer></script>
+    <link rel="shortcut icon" href="#" type="image/x-icon">
+</head>
+
+<body>
+    <main>
+        <div class="container">
+            <div class="header upper">
+                <h1>Expense Tracker</h1>
+                <div class="balance">
+                    <h2>₹ <span id="balance">0</span></h2>
+                    <h3>Your Balance</h3>
+                </div>
+            </div>
+            <div class="transaction_container upper">
+                <div>
+                    <h3>Transactions</h3>
+                    <hr>
+                </div>
+                <div class="transactions" id="transactions">
+                    <!-- <div class="card_container">
+                        <div class="card">
+                            <div class="details">
+                                <p>earn 1</p>
+                                <p>+ ₹ 10</p>
+                            </div>
+                            <div class="status">
+                                C
+                            </div>
+                        </div>
+                    </div> -->
+                </div>
+            </div>
+            <div class="add_transaction_container">
+                <h3>Add Transaction</h3>
+                <form class="transactionForm" id="transactionForm">
+                    <div class="inputs">
+                        <div class="form_control">
+                            <label for="description">Text</label>
+                            <input type="text" name="description" id="description" placeholder="Enter Description"
+                                required>
+                        </div>
+                        <div class="form_control">
+                            <label for="amount">Amount</label>
+                            <input type="number" name="amount" id="amount" placeholder="Enter Amount" required>
+                        </div>
+                    </div>
+                    <div class="buttons_container">
+                        <button type="submit" data-type="credit" id="earningsBtn">
+                            <p>₹ 0</p>
+                            <p>Earnings</p>
+                        </button>
+                        <button type="submit" data-type="debit" id="expenseBtn">
+                            <p>₹ 0</p>
+                            <p>Expense</p>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+</body>
+
+</html>
