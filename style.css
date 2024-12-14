@@ -198,3 +198,23 @@ h3 {
 .debit {
     background-color: #ff1818;
 }
+
+/* media query  */
+@media only screen and (min-width: 200px) and (max-width: 515px) {
+    .container {
+        min-width: 100%;
+    }
+}
+
+@media only screen and (min-width: 516px) and (max-width: 767px) {
+    .container {
+        min-width: 30vh;
+    }
+}
+
+
+@media only screen and (min-width: 768px) and (max-width: 1024px) {
+    .container {
+        min-width: 30vh;
+    }
+}
