@@ -6,20 +6,7 @@ const state = {
     earnings: 0,
     expense: 0,
     net: 0,
-    transactions: [
-        // {
-        //     id: 5,
-        //     description: "demo",
-        //     amount: 500,
-        //     type: "credit"
-        // },
-        // {
-        //     id: 6,
-        //     description: "demo debit",
-        //     amount: 400,
-        //     type: "debit"
-        // },
-    ]
+    transactions: [],
 };
 
 let isUpdate = false;
@@ -39,13 +26,12 @@ function renderTransaction() {
 
     transactionsEl.innerHTML = "";
     transactions.forEach((transaction) => {
-        // console.log(transaction);
 
         const { amount, description, id, type } = transaction;
         const isCredit = type === "credit" ? true : false;
         const sign = isCredit ? "+" : "-";
 
-        const cardContainerEl = /*html */`
+        let cardContainerEl = /*html */`
             <div class="card_container" id="${id}" >
                 <div class="card" onclick="showEdit(${id})">
                     <div class="details">
@@ -61,7 +47,7 @@ function renderTransaction() {
                         <div class="edit" onclick="handleUpdate(${id})">
                             <i class="fa-solid fa-pen-to-square" style="color: #302d2d;"></i>
                         </div>
-                        <div class=" delete" onclick="handleDelete(${id})">
+                        <div class="delete" onclick="handleDelete(${id})">
                             <i class="fa-solid fa-trash" style="color: #302d2d;"></i>
                         </div>
                     </div>
@@ -73,7 +59,18 @@ function renderTransaction() {
         net = earning - expense;
 
         transactionsEl.insertAdjacentHTML("afterbegin", cardContainerEl);
+        lastInsertedCardId = id;
     });
+
+    cardContainerEl = document.getElementById(lastInsertedCardId);
+    const card = cardContainerEl.querySelector(".card");
+
+    if (card) {
+        card.classList.add("appear");
+        card.addEventListener("animationend", () => {
+            card.classList.remove("appear");
+        });
+    }
 
     earningEl.innerText = earning;
     expenseEl.innerText = expense;
@@ -82,12 +79,9 @@ function renderTransaction() {
 
 function addTransaction(event) {
     event.preventDefault();
-
     const isEarn = event.submitter.id === "earningsBtn" ? true : false;
-
     formData = new FormData(transactionForm);
     const tData = {};
-
     formData.forEach((value, key) => {
         tData[key] = value;
     });
@@ -101,7 +95,6 @@ function addTransaction(event) {
         type: isEarn ? "credit" : "debit",
     };
 
-
     if (isUpdate) {
         const tIndex = state.transactions.findIndex((t) => t.id === tid);
         state.transactions[tIndex] = transaction;
@@ -112,8 +105,6 @@ function addTransaction(event) {
     }
 
     renderTransaction();
-
-    // console.log(state);
 }
 
 function showEdit(id) {
@@ -131,7 +122,6 @@ function handleUpdate(id) {
     const transaction = state.transactions.find((t) => t.id === id);
     const { description, amount } = transaction;
 
-
     descriptionInputEl.value = description;
     descriptionInputEl.focus();
     amountInputEl.value = amount;
@@ -140,14 +130,28 @@ function handleUpdate(id) {
 }
 
 function handleDelete(id) {
-    const filteredTransaction = state.transactions.filter((t) => t.id !== id);
-    state.transactions = filteredTransaction;
-    console.log(state.transactions);
-    renderTransaction();
+    const cardContainerEl = document.getElementById(id);
+
+    if (cardContainerEl) {
+        cardContainerEl.classList.add("disappear");
+        cardContainerEl.addEventListener("animationend", () => {
+            const filteredTransaction = state.transactions.filter((t) => t.id !== id);
+            state.transactions = filteredTransaction;
+            renderTransaction();
+        });
+    }
 }
-// renderTransaction();
+
 
 transactionForm.addEventListener("submit", (event) => {
+    const balance = document.getElementById('balance');
     addTransaction(event);
+
+    if (Number(balance.innerText) > 0) {
+        balance.parentElement.style.color = "#188d1c";
+    } else {
+        balance.parentElement.style.color = "#ff1818";
+    }
+
     transactionForm.reset();
 });

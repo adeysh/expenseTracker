@@ -75,6 +75,8 @@ h3 {
     bottom: 0;
     left: 0;
     width: 100%;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
 }
 
 
@@ -144,6 +146,40 @@ h3 {
 .card_container {
     display: block;
     margin: 20px 0;
+    animation: appear 0.8s ease-in-out;
+}
+
+.appear {
+    animation: appear 0.8s ease-in-out;
+}
+
+.disappear {
+    animation: disappear 0.5s ease-out;
+}
+
+@keyframes appear {
+    from {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Animation for disappearing */
+@keyframes disappear {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
 }
 
 .show {
@@ -177,6 +213,8 @@ h3 {
     padding: 0 10px;
     font-size: 14px;
     font-weight: 300;
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
 }
 
 .details p {
@@ -189,6 +227,8 @@ h3 {
     display: flex;
     align-items: center;
     justify-content: center;
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
 }
 
 .credit {
