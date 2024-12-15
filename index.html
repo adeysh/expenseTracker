@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Expense Tracker</title>
     <link rel="stylesheet" href="style.css">
-    <script src="index.js" defer></script>
+    <script src="index2.js" defer></script>
     <link rel="shortcut icon" href="#" type="image/x-icon">
     <script src="https://kit.fontawesome.com/98cfcb559a.js" crossorigin="anonymous" defer></script>
 </head>
@@ -66,11 +66,11 @@
                     </div>
                     <div class="buttons_container">
                         <button type="submit" data-type="credit" id="earningsBtn">
-                            <p>₹ 0</p>
+                            <p>₹ <span id="earning">0</span></p>
                             <p>Earnings</p>
                         </button>
                         <button type="submit" data-type="debit" id="expenseBtn">
-                            <p>₹ 0</p>
+                            <p>₹ <span id="expense">0</span></p>
                             <p>Expense</p>
                         </button>
                     </div>

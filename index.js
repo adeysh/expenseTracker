@@ -49,10 +49,17 @@ const updateTotalBalance = (totalBalance) => {
 };
 
 const calculateBalance = (amount) => {
+    if (isUpdating) {
+        let totalBalance = 0;
+        totalBalance += amount;
+        updateTotalBalance(totalBalance);
+        return;
+    }
     let totalBalance = 0;
     totalBalance += amount;
-    // console.log(totalBalance);
     updateTotalBalance(totalBalance);
+    return;
+    // console.log(totalBalance);
 };
 
 
@@ -73,7 +80,10 @@ const updateCardDetails = (card, form, amount, type) => {
     const statusElement = card.querySelector(".status");
 
     // Retrieve previous amount for balance adjustment
-    const previousAmount = parseInt(amountElement.dataset.previousValue || 0);
+    // const previousAmount = parseInt(amountElement.dataset.previousValue || 0);
+    const previousAmount = Number(document.getElementById('balance').innerText);
+
+    console.log(amount - previousAmount);
 
     // Update the card details
     descriptionElement.textContent = form.get("description");
@@ -99,7 +109,7 @@ const deleteCard = (event) => {
 
 
 let cardToUpdate = null;
-
+let isUpdating = false;
 const handleEditClick = (event) => {
     isUpdating = true; // Set the state to update
     cardToUpdate = event.currentTarget.closest(".showEditContainer").previousElementSibling;
