@@ -1,157 +1,157 @@
-const earningsBtn = document.getElementById('earningsBtn');
-const expenseBtn = document.getElementById('expenseBtn');
 const transactionForm = document.getElementById('transactionForm');
-const transactionsEl = document.getElementById('transactions');
+const descriptionInputEl = document.getElementById('description');
+const amountInputEl = document.getElementById('amount');
 
-const addTransactionCard = (formData, buttonType) => {
-    const container = document.createElement("div");
-    container.classList.add("card_container", "show");
-    let status = "";
-    let statusClass = "";
-    if (buttonType === "credit") {
-        status = "C";
-        statusClass = "credit";
+const state = {
+    earnings: 0,
+    expense: 0,
+    net: 0,
+    transactions: [],
+};
+
+let isUpdate = false;
+let tid;
+
+function renderTransaction() {
+    const transactionsEl = document.getElementById('transactions');
+    const balanceEl = document.getElementById('balance');
+    const earningEl = document.getElementById('earning');
+    const expenseEl = document.getElementById('expense');
+
+    const transactions = state.transactions;
+
+    let earning = 0;
+    let expense = 0;
+    let net = 0;
+
+    transactionsEl.innerHTML = "";
+    transactions.forEach((transaction) => {
+
+        const { amount, description, id, type } = transaction;
+        const isCredit = type === "credit" ? true : false;
+        const sign = isCredit ? "+" : "-";
+
+        let cardContainerEl = /*html */`
+            <div class="card_container" id="${id}" >
+                <div class="card" onclick="showEdit(${id})">
+                    <div class="details">
+                        <p>${description}</p>
+                        <p>${sign} ₹ ${amount}</p>
+                    </div>
+                    <div class="status ${isCredit ? "credit" : "debit"}">
+                        ${isCredit ? "C" : "D"}
+                    </div>
+                </div>
+                <div class="showEditContainer">
+                    <div class="showEdit">
+                        <div class="edit" onclick="handleUpdate(${id})">
+                            <i class="fa-solid fa-pen-to-square" style="color: #302d2d;"></i>
+                        </div>
+                        <div class="delete" onclick="handleDelete(${id})">
+                            <i class="fa-solid fa-trash" style="color: #302d2d;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+
+        earning += isCredit ? amount : 0;
+        expense += !isCredit ? amount : 0;
+        net = earning - expense;
+
+        transactionsEl.insertAdjacentHTML("afterbegin", cardContainerEl);
+        lastInsertedCardId = id;
+    });
+
+    cardContainerEl = document.getElementById(lastInsertedCardId);
+    const card = cardContainerEl.querySelector(".card");
+
+    if (card) {
+        card.classList.add("appear");
+        card.addEventListener("animationend", () => {
+            card.classList.remove("appear");
+        });
+    }
+
+    earningEl.innerText = earning;
+    expenseEl.innerText = expense;
+    balanceEl.innerText = net;
+}
+
+function addTransaction(event) {
+    event.preventDefault();
+    const isEarn = event.submitter.id === "earningsBtn" ? true : false;
+    formData = new FormData(transactionForm);
+    const tData = {};
+    formData.forEach((value, key) => {
+        tData[key] = value;
+    });
+
+    const { description, amount } = tData;
+
+    const transaction = {
+        id: isUpdate ? tid : Math.floor(Math.random() * 1000),
+        description: description,
+        amount: Number(amount),
+        type: isEarn ? "credit" : "debit",
+    };
+
+    if (isUpdate) {
+        const tIndex = state.transactions.findIndex((t) => t.id === tid);
+        state.transactions[tIndex] = transaction;
+        isUpdate = false;
+        tid = null;
     } else {
-        status = "D";
-        statusClass = "debit";
+        state.transactions.push(transaction);
     }
-    // console.log(amount);
-    const content = `
-        <div class="card" onclick="showEdit(event)">
-            <div class="details">
-                <p>${formData.get("description")}</p>
-                <p>${statusClass === "credit" ? "+" : statusClass === "debit" ? "-" : ""} ₹ ${Number(formData.get("amount"))}</p>
-            </div>
-            <div class="status ${statusClass}" id="status">
-                ${status}
-            </div>
-        </div>
-        <div class="showEditContainer">
-            <div class="showEdit">
-                <div class="edit">
-                    <i class="fa-solid fa-pen-to-square" id="edit" style="color: #302d2d;" onclick="handleEditClick(event)"></i>
-                </div>
-                <div class=" delete">
-                    <i class="fa-solid fa-trash" id="delete" style="color: #302d2d;" onclick="deleteCard(event);"></i>
-                </div>
-            </div>
-        </div>
-        `;
 
-    container.innerHTML += content;
-    transactionsEl.appendChild(container);
-};
+    renderTransaction();
+}
 
-const updateTotalBalance = (totalBalance) => {
-    const balance = document.getElementById('balance');
-    let newBalance = Number(balance.innerText) + totalBalance;
-    balance.innerText = newBalance;
-};
+function showEdit(id) {
+    const selectedCard = document.getElementById(id);
+    const showEditContainer = selectedCard.querySelector(".showEditContainer");
 
-const calculateBalance = (amount) => {
-    if (isUpdating) {
-        let totalBalance = 0;
-        totalBalance += amount;
-        updateTotalBalance(totalBalance);
-        return;
-    }
-    let totalBalance = 0;
-    totalBalance += amount;
-    updateTotalBalance(totalBalance);
-    return;
-    // console.log(totalBalance);
-};
-
-
-const showEdit = (event) => {
-    console.log(event.currentTarget.parentElement.children[1]);
-    const card = event.currentTarget.parentElement;
-    const showEditContainer = event.currentTarget.parentElement.children[1];
     if (showEditContainer.style.display === "none" || showEditContainer.style.display === "") {
         showEditContainer.style.display = "block";
     } else {
         showEditContainer.style.display = "none";
     }
-};
+}
 
-const updateCardDetails = (card, form, amount, type) => {
-    const descriptionElement = card.querySelector(".details p:first-child");
-    const amountElement = card.querySelector(".details p:last-child");
-    const statusElement = card.querySelector(".status");
+function handleUpdate(id) {
+    const transaction = state.transactions.find((t) => t.id === id);
+    const { description, amount } = transaction;
 
-    // Retrieve previous amount for balance adjustment
-    // const previousAmount = parseInt(amountElement.dataset.previousValue || 0);
-    const previousAmount = Number(document.getElementById('balance').innerText);
+    descriptionInputEl.value = description;
+    descriptionInputEl.focus();
+    amountInputEl.value = amount;
+    tid = id;
+    isUpdate = true;
+}
 
-    console.log(amount - previousAmount);
+function handleDelete(id) {
+    const cardContainerEl = document.getElementById(id);
 
-    // Update the card details
-    descriptionElement.textContent = form.get("description");
-    amountElement.textContent = `${type === "credit" ? "+" : "-"} ₹ ${Math.abs(amount)}`;
-    statusElement.textContent = type === "credit" ? "C" : "D";
-    statusElement.className = `status ${type}`;
-
-    // Adjust the balance by the difference
-    calculateBalance(amount - previousAmount);
-    amountElement.dataset.previousValue = amount;
-};
-
-const resetFormAndState = () => {
-    transactionForm.description.value = "";
-    transactionForm.amount.value = "";
-    // cardToUpdate = null; // Reset the card-to-update state
-};
-
-const deleteCard = (event) => {
-    console.log("delete card click");
-};
+    if (cardContainerEl) {
+        cardContainerEl.classList.add("disappear");
+        cardContainerEl.addEventListener("animationend", () => {
+            const filteredTransaction = state.transactions.filter((t) => t.id !== id);
+            state.transactions = filteredTransaction;
+            renderTransaction();
+        });
+    }
+}
 
 
+transactionForm.addEventListener("submit", (event) => {
+    const balance = document.getElementById('balance');
+    addTransaction(event);
 
-let cardToUpdate = null;
-let isUpdating = false;
-const handleEditClick = (event) => {
-    isUpdating = true; // Set the state to update
-    cardToUpdate = event.currentTarget.closest(".showEditContainer").previousElementSibling;
-    console.log("Edit mode activated for card:", cardToUpdate);
-};
-
-earningsBtn.addEventListener("click", (event) => {
-    event.preventDefault();
-
-    const form = new FormData(transactionForm);
-    const buttonType = earningsBtn.getAttribute("data-type");
-    const amount = parseInt(form.get("amount"));
-    console.log(cardToUpdate);
-    if (cardToUpdate) {
-        // If editing an existing card
-        updateCardDetails(cardToUpdate, form, amount, "credit");
+    if (Number(balance.innerText) > 0) {
+        balance.parentElement.style.color = "#188d1c";
     } else {
-        // Add a new card
-        calculateBalance(amount);
-        addTransactionCard(form, buttonType);
+        balance.parentElement.style.color = "#ff1818";
     }
 
-    // Clear form and reset state
-    resetFormAndState();
-});
-
-expenseBtn.addEventListener("click", (event) => {
-    event.preventDefault();
-
-    const form = new FormData(transactionForm);
-    const buttonType = expenseBtn.getAttribute("data-type");
-    const amount = -parseInt(form.get("amount"));
-
-    if (cardToUpdate) {
-        // If editing an existing card
-        updateCardDetails(cardToUpdate, form, amount, "debit");
-    } else {
-        // Add a new card
-        calculateBalance(-amount);
-        addTransactionCard(form, buttonType);
-    }
-
-    // Clear form and reset state
-    resetFormAndState();
+    transactionForm.reset();
 });
