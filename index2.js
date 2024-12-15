@@ -1,4 +1,6 @@
 const transactionForm = document.getElementById('transactionForm');
+const descriptionInputEl = document.getElementById('description');
+const amountInputEl = document.getElementById('amount');
 
 const state = {
     earnings: 0,
@@ -20,6 +22,8 @@ const state = {
     ]
 };
 
+let isUpdate = false;
+let tid;
 
 function renderTransaction() {
     const transactionsEl = document.getElementById('transactions');
@@ -35,34 +39,34 @@ function renderTransaction() {
 
     transactionsEl.innerHTML = "";
     transactions.forEach((transaction) => {
-        console.log(transaction);
+        // console.log(transaction);
 
         const { amount, description, id, type } = transaction;
         const isCredit = type === "credit" ? true : false;
         const sign = isCredit ? "+" : "-";
 
-        const cardContainerEl = `
-        <div class="card_container" id="${id}">
-            <div class="card">
-                <div class="details">
-                    <p>${description}</p>
-                    <p>${sign} ₹ ${amount}</p>
-                </div>
-                <div class="status ${isCredit ? "credit" : "debit"}">
-                    ${isCredit ? "C" : "D"}
-                </div>
-            </div>
-            <div class="showEditContainer">
-                <div class="showEdit">
-                    <div class="edit">
-                        <i class="fa-solid fa-pen-to-square" style="color: #302d2d;"></i>
+        const cardContainerEl = /*html */`
+            <div class="card_container" id="${id}" >
+                <div class="card" onclick="showEdit(${id})">
+                    <div class="details">
+                        <p>${description}</p>
+                        <p>${sign} ₹ ${amount}</p>
                     </div>
-                    <div class=" delete">
-                        <i class="fa-solid fa-trash" style="color: #302d2d;"></i>
+                    <div class="status ${isCredit ? "credit" : "debit"}">
+                        ${isCredit ? "C" : "D"}
                     </div>
                 </div>
-            </div>
-        </div>`;
+                <div class="showEditContainer">
+                    <div class="showEdit">
+                        <div class="edit" onclick="handleUpdate(${id})">
+                            <i class="fa-solid fa-pen-to-square" style="color: #302d2d;"></i>
+                        </div>
+                        <div class=" delete" onclick="handleDelete(${id})">
+                            <i class="fa-solid fa-trash" style="color: #302d2d;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
 
         earning += isCredit ? amount : 0;
         expense += !isCredit ? amount : 0;
@@ -91,19 +95,59 @@ function addTransaction(event) {
     const { description, amount } = tData;
 
     const transaction = {
-        id: Math.floor(Math.random() * 1000),
+        id: isUpdate ? tid : Math.floor(Math.random() * 1000),
         description: description,
         amount: Number(amount),
         type: isEarn ? "credit" : "debit",
     };
 
-    state.transactions.push(transaction);
+
+    if (isUpdate) {
+        const tIndex = state.transactions.findIndex((t) => t.id === tid);
+        state.transactions[tIndex] = transaction;
+        isUpdate = false;
+        tid = null;
+    } else {
+        state.transactions.push(transaction);
+    }
 
     renderTransaction();
 
     // console.log(state);
 }
 
-renderTransaction();
+function showEdit(id) {
+    const selectedCard = document.getElementById(id);
+    const showEditContainer = selectedCard.querySelector(".showEditContainer");
 
-transactionForm.addEventListener("submit", addTransaction);
+    if (showEditContainer.style.display === "none" || showEditContainer.style.display === "") {
+        showEditContainer.style.display = "block";
+    } else {
+        showEditContainer.style.display = "none";
+    }
+}
+
+function handleUpdate(id) {
+    const transaction = state.transactions.find((t) => t.id === id);
+    const { description, amount } = transaction;
+
+
+    descriptionInputEl.value = description;
+    descriptionInputEl.focus();
+    amountInputEl.value = amount;
+    tid = id;
+    isUpdate = true;
+}
+
+function handleDelete(id) {
+    const filteredTransaction = state.transactions.filter((t) => t.id !== id);
+    state.transactions = filteredTransaction;
+    console.log(state.transactions);
+    renderTransaction();
+}
+// renderTransaction();
+
+transactionForm.addEventListener("submit", (event) => {
+    addTransaction(event);
+    transactionForm.reset();
+});
